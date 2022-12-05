@@ -1,1 +1,2 @@
 # product-bookmark
+A website that tracks prices of the product with input SastoDeal url, and scrapes at random time to check if the prices have dropped with last scraped date/time and reduction percentage. 
