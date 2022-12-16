@@ -4,44 +4,33 @@ import json
 import os
 import sys
 from datetime import datetime
+from app import get_db_connection, get_product
 
-link = "https://www.sastodeal.com/electronic/laptops.html"
-json_file = "files/all_scrapes.json"
+now = 'https://www.sastodeal.com/combo-set-of-3-pcs-tshirt-shorts-and-trackpants-sd-305396-1354-cms31.html'
+here = "https://www.sastodeal.com/lnspirion-15-gaming-series-g5-i7-11800h-16gb-8x2-512gb-15-6-120hz-250nits-r-sd-dlpts-033.html"
 
-with open("files/laptop_scrape.json", "w") as f:
-    f.close()
+itemList = []
 
-def scrape():
+def scrape(link):
     url = requests.get(link)
     # print("Current Link: ", link)
     html = BeautifulSoup(url.content, "html.parser")
-    item_list = []
     main_page = html
-    item_name = main_page.find(["a"], class_="product-item-link").get_text()
-    price = main_page.find(["span"], class_="price").get_text()
+    item_name = main_page.find(["h1"], class_="page-title").get_text()
+    first_scrape = datetime.now()
+    first_price = (main_page.find(["span"], class_="price").get_text()[3:]).replace(",", "")
+    recent_scrape = datetime.now()
+    # new_price = main_page.find(["span"], class_="price").get_text()[3:]
+    # reduced = (float(new_price) - float(first_price))*100
+    # lowest_price = new_price if new_price > first_price else first_price
+    lowest_price = datetime.now()
+    
 
-item_info = {
-    "item_name": item_name,
-    "price": price,
-    "first_scrape": datetime.now(),
-    "recent_scrape": None,
-    "reduced": None
-}
+    
+    print(item_name, first_scrape, first_price)
+    
+scrape(now)
 
-with open("files/laptop_scrape.json", "r+") as f:
-    file_data = json.load(f)
-    try:
-       
-        if item_name in json_dict["item_name"]:
-            scrape()
-            if (price<json_dict["price"]):
-                print("price dropped")
-                json_dict["recent_scrape"] = datetime.now()
-                reduced = (json_dict["price"] - price)
-                json_dict["price"] = price
-        
-    except AttributeError: # new item
-        item_list.append(item_info)
 
 
 

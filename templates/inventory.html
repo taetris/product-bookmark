@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Inventory:</title>
+</head>
+<body>
+    <h2> Pinned Products: </h2>
+
+{% block content %}
+    <h1>{% block title %} Welcome to Scraper {% endblock %}</h1>
+    {% for product in products %}
+        <a href="{{ url_for('product', product_id=product['id']) }}">
+            <h2>{{ product['title'] }}</h2>
+        </a>
+        
+        <hr>
+    {% endfor %}
+{% endblock %}
+</body>
+</html>
