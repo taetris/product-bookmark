@@ -1,6 +1,5 @@
 from bs4 import BeautifulSoup
 import requests
-import json
 import os
 import sys
 from datetime import datetime
@@ -10,6 +9,7 @@ now = 'https://www.sastodeal.com/combo-set-of-3-pcs-tshirt-shorts-and-trackpants
 here = "https://www.sastodeal.com/lnspirion-15-gaming-series-g5-i7-11800h-16gb-8x2-512gb-15-6-120hz-250nits-r-sd-dlpts-033.html"
 
 itemList = []
+
 
 def scrape(link):
     url = requests.get(link)
@@ -24,15 +24,12 @@ def scrape(link):
     # reduced = (float(new_price) - float(first_price))*100
     # lowest_price = new_price if new_price > first_price else first_price
     lowest_price = datetime.now()
-    
+    # print("Title: ", item_name, "Date scraped:", first_scrape, "Price:",first_price)
+    info_list = [item_name, first_scrape, first_price]
+    print(info_list)
+    return info_list
 
-    
-    print(item_name, first_scrape, first_price)
-    
-scrape(now)
+# while True:
+#     time.sleep(10)
 
-
-
-
-
-
+#     print(scrape(now))
