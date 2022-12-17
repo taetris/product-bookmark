@@ -7,8 +7,23 @@
 
 from flask import Flask, render_template, url_for, redirect, request
 import sqlite3
-
+from flask_apscheduler import APScheduler as scheduler
+from flask_sqlalchemy import SQLAlchemy
+# from scrape import scrape
 app = Flask(__name__)
+
+def scrapy():
+    print("runningg...")
+
+if __name__ == "__main__":
+    scheduler.add_job(id = 'the task scheduled', func = scrapy, trigger = 'interval', seconds =5)
+    scheduler.start()
+    app.run('127.0.0.1', port =5000)
+ 
+
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
+# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# db = SQLAlchemy(app)
 
 def get_db_connection():
     conn = sqlite3.connect('database.db')
@@ -35,19 +50,16 @@ def index():
     products = conn.execute('SELECT * FROM products').fetchall()
     conn.close()
 
-
-    msg = ""
-    redirect = True
     img = "static/files/default.png"
     if request.method == 'POST':    # submitted
         input_link = request.form["url-input"]
         print(input_link)
-        # filename, content = download(input_link)
-        # data = openfile(filename)
+        info_list = scrape(input_link)
+        print(info_list)
         if (input_link == ""):
             img = "static/files/error.png"
-            redirect = False
-    return render_template("index.html", image = img, msg = msg, products = products)
+           
+    return render_template("index.html", image = img)
 
 
 @app.route('/product', methods = ('GET', 'POST'))
