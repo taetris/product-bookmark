@@ -7,19 +7,12 @@
 
 from flask import Flask, render_template, url_for, redirect, request
 import sqlite3
+import sys
 from flask_apscheduler import APScheduler as scheduler
-from flask_sqlalchemy import SQLAlchemy
+
 # from scrape import scrape
 app = Flask(__name__)
 
-def scrapy():
-    print("runningg...")
-
-if __name__ == "__main__":
-    scheduler.add_job(id = 'the task scheduled', func = scrapy, trigger = 'interval', seconds =5)
-    scheduler.start()
-    app.run('127.0.0.1', port =5000)
- 
 
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
 # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -27,13 +20,13 @@ if __name__ == "__main__":
 
 def get_db_connection():
     conn = sqlite3.connect('database.db')
-    conn.row_factory = sqlite3.Row
-    return conn
+    # conn.row_factory = sqlite3.Row
+    cur = conn.cursor()
+    return conn, cur
 
 def get_product(product_id):
     conn = get_db_connection()
-    product = conn.execute('SELECT * FROM products WHERE id = ?',
-                        (product_id,)).fetchone()
+    product = conn.execute('SELECT * FROM products').fetchone()
     conn.close()
     if product is None:
         abort(404)
@@ -44,27 +37,46 @@ def get_product(product_id):
 #     post = get_post(post_id)
 #     return render_template('post.html', post=post)
 
-@app.route('/', methods=('GET', 'product'))
+@app.route('/', methods=('GET','POST', 'product'))
 def index():
-    conn = get_db_connection()
-    products = conn.execute('SELECT * FROM products').fetchall()
-    conn.close()
+    conn, cur = get_db_connection()
+    # products = conn.execute('SELECT * FROM products').fetchall()
+    
 
     img = "static/files/default.png"
-    if request.method == 'POST':    # submitted
-        input_link = request.form["url-input"]
+    input_link="blahh"
+    print("start")
+    if (request.method == 'POST'):    # submitted
+        input_link = request.form["input_link"]
         print(input_link)
-        info_list = scrape(input_link)
-        print(info_list)
-        if (input_link == ""):
-            img = "static/files/error.png"
-           
-    return render_template("index.html", image = img)
+        print("here")
+        # if (input_link == ""):
+        #     img = "static/files/error.png"
+        #     print("imgg")
+        # else:
+        query = "INSERT INTO products VALUES('{input_link}')".format(input_link = input_link)
+        cur.execute(query)
+        conn.commit()
+        conn.close()
+        print("added")
+        return redirect(url_for('product'))
+        # info_list = scrape(input_link)
+        # print(info_list)
+    else:
+     
+        return render_template("index.html", image = img)
 
 
 @app.route('/product', methods = ('GET', 'POST'))
 def product():
-    return render_template('product.html')
+    result = "nothing"
+    # if request.method == "GET":
+    # prod_url = request.args.get("")
+    conn, cur = get_db_connection()
+    cur.execute("SELECT * FROM products")
+    result = cur.fetchall()
+    conn.close()
+    return render_template('product.html', result = result)
 
 @app.route('/inventory', methods = ('GET', 'POST'))
 def inventory():

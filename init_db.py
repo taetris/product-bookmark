@@ -8,10 +8,8 @@ with open('schema.sql') as f:
 
 cur = connection.cursor()
 
-cur.execute("INSERT INTO products (item_name, first_scrape, first_price) VALUES (?, ?, ?)",
-            ('First Product', 'Time', 'Content for the first post')
-            )
-
+# cur.execute("INSERT INTO products (input_link) VALUES (?)")
+print("database.db created")
 
 connection.commit()
 connection.close()

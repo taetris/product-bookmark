@@ -10,16 +10,16 @@
         <h1>Welcome to Product Tracker</h1>
         <h2>Copy paste your SastoDeal URL below.</h2>
 
-        <form action="product" method="POST">
+        <form method="POST">
             <div class="form-group">
                 <label for="url">URL:</label>
-                <input type="text" name="url-input" placeholder="Enter or copy-paste URL here.">
+                <input type="text" name="input_link" placeholder="Enter or copy-paste URL here.">
                 </input>
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
         
-        {% if not input_url %}
+        {% if not input_link %}
         <img src = "{{ image }}" style = 'width: 400px;'>
         {% endif %}
 

@@ -7,22 +7,21 @@
     <title>Your Product:</title>
 </head>
 <body>  
-    <h4>Product Name:
-        Sastodeal Product Link:
-        Price:
-        Last Scraped on:
-        Lowest Price:
-        on:
-    </h4>
-
-    {% for product in products %}
+    <h1> Your Pinned Products: </h1>
+    <!-- {{ result  }} -->
+    {% for row in result %}
+    <p>{{ row }}</p>
+    
+    {% endfor %} 
+    
+    <!-- {% for product in result %}
         <a href="#">
             <h2>{{ product['item_name'] }}</h2>
         </a>
         <span class="badge badge-primary">{{ product['first_scrape'] }}</span>
         <span class="badge badge-primary">{{ product['first_price'] }}</span>
         <hr>
-    {% endfor %}
+    {% endfor %} -->
 </body>
 </html>
 {% extends 'base.html' %}
