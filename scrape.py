@@ -14,17 +14,16 @@ itemList = []
 # global itemName, price
 
 def scrape(link):
-    conn, cur = get_db_connection()
-    cur.execute("SELECT * FROM products")
-    result = cur.fetchall()
-    conn.close() 
-    global itemName, price
+    # conn, cur = get_db_connection()
+    # cur.execute("SELECT * FROM products")
+    # result = cur.fetchall()
+    # conn.close() 
     url = requests.get(link)
     mainPage = BeautifulSoup(url.content, "html.parser")
     itemName = mainPage.find(["h1"], class_="page-title").get_text()
     price = (mainPage.find(["span"], class_="price").get_text()[3:]).replace(",", "")
     recentScrape = datetime.now()
-    print(itemName, price)
+    print("printing...", itemName, price)
 
     
 

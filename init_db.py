@@ -8,7 +8,6 @@ with open('schema.sql') as f:
 
 cur = connection.cursor()
 
-# cur.execute("INSERT INTO products (input_link) VALUES (?)")
 print("database.db created")
 
 connection.commit()

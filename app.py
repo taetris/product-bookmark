@@ -11,7 +11,7 @@ import sys
 from flask_apscheduler import APScheduler as scheduler
 from scrape import scrape
 from db_connect import get_db_connection
-from schedule import scheduler
+from schedule import start_scheduler
 
 app = Flask(__name__)
 
@@ -49,6 +49,8 @@ def index():
         #     img = "static/files/error.png"
         #     print("imgg")
         # else:
+        product_name = 'product_1'
+        price = '1000'
         product_name, price = scrape(input_link)
         query = "INSERT INTO products (input_link, product_name, price) VALUES (?, ?, ?)"
         params = (input_link, product_name, price)
@@ -56,7 +58,6 @@ def index():
         conn.commit()
         conn.close()
 
-        print("added")
         return redirect(url_for('product'))
         # info_list = scrape(input_link)
         # print(info_list)
