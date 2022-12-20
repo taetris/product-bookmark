@@ -9,8 +9,10 @@ from flask import Flask, render_template, url_for, redirect, request
 import sqlite3
 import sys
 from flask_apscheduler import APScheduler as scheduler
+from scrape import scrape
+from db_connect import get_db_connection
+from schedule import scheduler
 
-# from scrape import scrape
 app = Flask(__name__)
 
 
@@ -18,11 +20,6 @@ app = Flask(__name__)
 # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # db = SQLAlchemy(app)
 
-def get_db_connection():
-    conn = sqlite3.connect('database.db')
-    # conn.row_factory = sqlite3.Row
-    cur = conn.cursor()
-    return conn, cur
 
 def get_product(product_id):
     conn = get_db_connection()
@@ -44,20 +41,21 @@ def index():
     
 
     img = "static/files/default.png"
-    input_link="blahh"
+    
     print("start")
     if (request.method == 'POST'):    # submitted
         input_link = request.form["input_link"]
-        print(input_link)
-        print("here")
         # if (input_link == ""):
         #     img = "static/files/error.png"
         #     print("imgg")
         # else:
-        query = "INSERT INTO products VALUES('{input_link}')".format(input_link = input_link)
-        cur.execute(query)
+        product_name, price = scrape(input_link)
+        query = "INSERT INTO products (input_link, product_name, price) VALUES (?, ?, ?)"
+        params = (input_link, product_name, price)
+        cur.execute(query, params)
         conn.commit()
         conn.close()
+
         print("added")
         return redirect(url_for('product'))
         # info_list = scrape(input_link)
