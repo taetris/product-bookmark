@@ -1,62 +1,50 @@
 from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.schedulers.blocking import BlockingScheduler
+
 import time 
 from scrape import scrape 
 from db_connect import get_db_connection
 
-def tuple_to_list(links):
-    linklist =[]
-    for link in links:
-        linklist.append(link[0])
-    return linklist
 
 def connectDB_and_setSize():
     conn, cur = get_db_connection()
-    cur.arraysize = 4
+    cur.arraysize = 10
     cur.execute("SELECT * FROM products")
     return conn, cur
 
 def myscheduler():
-    x=1
-    print("hello")
+    x = 1
     conn, cur = connectDB_and_setSize()
-    while True:
-        links = cur.fetchmany() 
-        # if not links:
-        #     break
-        linklist = tuple_to_list(links)
-
-        for link in linklist:
-            itemName, price = scrape(link)
-            # start_scheduler(link)
-            query = "UPDATE products SET price=?, product_name=? WHERE input_link=?"
-            params = (price, itemName, link)
-            cur.execute(query, params)
-            conn.commit()
-            time.sleep(1)
-            print("loop: ", x)
-            x=x+1
-        time.sleep(1)
+    
+    products = cur.fetchmany() 
+    
+    for product in products:
+        print("loop: ", x)
+        link = product[0]
+        itemName, price = scrape(link)
+        # start_scheduler(link)
+        query = "UPDATE products SET price=?, product_name=? WHERE input_link=?"
+        params = (price, itemName, link)
+        cur.execute(query, params)
+        conn.commit()
+        x=x+1
+    
+    print("----------------------")
     conn.close()
     
-def start_scheduler():
+def schedd():
     print("scheduling...")
     scheduler = BackgroundScheduler(timezone = "Asia/Kathmandu")
+
+    job = scheduler.add_job(myscheduler, 'interval', seconds = 60)
     scheduler.start()
-    link = "https://www.sastodeal.com/lnspirion-15-gaming-series-g5-i7-11800h-16gb-8x2-512gb-15-6-120hz-250nits-r-sd-dlpts-033.html"
-
-    job = scheduler.add_job(scrape, 'interval',[link], seconds = 5)
-    print("done")
-    
-
-start_scheduler()
+    print(job, "done")
 
 
-# query = "UPDATE products SET price = {0} WHERE name = '{1}'".format(new_price, product_name)
-# cursor.execute(query)
-# connection.commit()
-# cursor.close()
-# connection.close()
 
+# start_scheduler()
+# # Shut down the scheduler when you're done
+# scheduler.shutdown()
 
 # for link in linklist:
 #     scheduler = BackgroundScheduler(timezone = "Asia/Kathmandu")

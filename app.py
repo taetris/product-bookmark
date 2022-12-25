@@ -3,7 +3,6 @@
 # Scrape data from daraz at random intervals for product
 # if(price<previous_price):
 #   send_alert_via_email or discord()
-#
 
 from flask import Flask, render_template, url_for, redirect, request
 import sqlite3
@@ -11,35 +10,18 @@ import sys
 from flask_apscheduler import APScheduler as scheduler
 from scrape import scrape
 from db_connect import get_db_connection
-from schedule import start_scheduler
+from schedule_scrape import schedd
+
 
 app = Flask(__name__)
+schedd()
 
 
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
-# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-# db = SQLAlchemy(app)
-
-
-def get_product(product_id):
-    conn = get_db_connection()
-    product = conn.execute('SELECT * FROM products').fetchone()
-    conn.close()
-    if product is None:
-        abort(404)
-    return product
-
-# @app.route('/<int:post_id>')
-# def post(post_id):
-#     post = get_post(post_id)
-#     return render_template('post.html', post=post)
-
-@app.route('/', methods=('GET','POST', 'product'))
+@app.route('/', methods=('GET','POST'))
 def index():
     conn, cur = get_db_connection()
     # products = conn.execute('SELECT * FROM products').fetchall()
     
-
     img = "static/files/default.png"
     
     print("start")
@@ -77,6 +59,31 @@ def product():
     conn.close()
     return render_template('product.html', result = result)
 
+
 @app.route('/inventory', methods = ('GET', 'POST'))
 def inventory():
     return render_template('inventory.html')
+
+
+
+
+
+
+
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
+# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# db = SQLAlchemy(app)
+
+
+# def get_product(product_id):
+    # conn = get_db_connection()
+    # product = conn.execute('SELECT * FROM products').fetchone()
+    # conn.close()
+    # if product is None:
+    #     abort(404)
+    # return product
+
+# @app.route('/<int:post_id>')
+# def post(post_id):
+#     post = get_post(post_id)
+#     return render_template('post.html', post=post)
