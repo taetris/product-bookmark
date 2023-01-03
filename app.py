@@ -11,7 +11,7 @@ from flask_apscheduler import APScheduler as scheduler
 from scrape import scrape
 from db_connect import get_db_connection
 from schedule_scrape import schedd
-
+from datetime import datetime
 
 app = Flask(__name__)
 schedd()
@@ -31,11 +31,13 @@ def index():
         #     img = "static/files/error.png"
         #     print("imgg")
         # else:
-        product_name = 'product_1'
-        price = '1000'
+        # product_name = 'product_1'
+        # price = '1000'
+
+        # Initial Inputs
         product_name, price = scrape(input_link)
-        query = "INSERT INTO products (input_link, product_name, price) VALUES (?, ?, ?)"
-        params = (input_link, product_name, price)
+        query = "INSERT INTO products (input_link, product_name, price, update_at) VALUES (?, ?, ?, ?)"
+        params = (input_link, product_name, price, datetime.now())
         cur.execute(query, params)
         conn.commit()
         conn.close()
