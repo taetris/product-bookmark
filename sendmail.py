@@ -1,16 +1,29 @@
-# import smtplib
+import smtplib
+from maildata import sender_address, sender_pass, receiver_address
 
-# # Set up the SMTP server
-# server = smtplib.SMTP('smtp.gmail.com', 587)
-# server.starttls()
-# server.login("email", "pw")
 
-# # Send the email
-# to_email = "hixih19550@haikido.com"
-# subject = "Email with content in a variable"
-# body = "some data"
-# message = f"Subject: {subject}\n\n{body}"
-# server.sendmail("email", to_email, message)
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
-# # Disconnect from the server
-# server.quit()
+
+
+def send_mail():
+    #Setup the MIME
+    message = MIMEMultipart()
+    message['From'] = sender_address
+    message['To'] = receiver_address
+    message['Subject'] = 'SastoDeal Price Drop Update'   #The subject line
+    mail_content = 'Prices for product_name dropped to price. Click here to navigate to the Sastodeal page!'
+
+    #The body and the attachments for the mail
+    message.attach(MIMEText(mail_content, 'plain'))
+    
+    #Create SMTP session for sending the mail
+    session = smtplib.SMTP('smtp.gmail.com', 587) #use gmail with port
+    session.starttls() #enable security
+    session.login(sender_address, sender_pass) #login with mail_id and password
+    text = message.as_string()
+    session.sendmail(sender_address, receiver_address, text)
+    session.quit()
+    
+    print('Mail Sent')
